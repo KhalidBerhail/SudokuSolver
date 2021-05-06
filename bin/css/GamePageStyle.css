@@ -1,0 +1,209 @@
+@font-face {
+    -fx-font-family:"kenvector future";
+    src: url('../resources/kenvector_future.ttf');
+}
+
+@font-face {
+    -fx-font-family: "Anja Eliane accent";
+    src: url('../resources/Anja.ttf');
+}
+
+@font-face {
+    -fx-font-family: "orange juice";
+    src: url('../resources/OrangeJuice.ttf');
+}
+
+.gameTitle {
+	-fx-font-family: "orange juice";
+}
+
+
+.text-area .text-field {
+	-fx-font-family: "kenvector future";
+    -fx-background-color: transparent;
+    -fx-border-radius: 0px;
+}
+
+.text-area:centered .text {
+    -fx-text-alignment: center ;
+}
+
+
+
+#undo_arrow{
+   -fx-background: transparent;
+   -fx-background-image: url('../resources/undo.png');
+   -fx-background-size: 55px;
+    -fx-background-repeat: no-repeat;
+}
+#redo_arrow{
+   -fx-background: transparent;
+   -fx-background-image: url('../resources/redo.png');
+   -fx-background-size: 55px;
+    -fx-background-repeat: no-repeat;
+}
+#edit_button{
+   -fx-background: transparent;
+   -fx-background-image: url('../resources/edit.png');
+   -fx-background-size: 40px;
+    -fx-background-repeat: no-repeat;
+}
+#erase_button{
+   -fx-background: transparent;
+   -fx-background-image: url('../resources/erase.png');
+   -fx-background-size: 40px;
+    -fx-background-repeat: no-repeat;
+}
+#help_button{
+   -fx-background: transparent;
+   -fx-background-image: url('../resources/help.png');
+   -fx-background-size: 40px;
+    -fx-background-repeat: no-repeat;
+}
+
+
+#undo_arrow:pressed{
+	-fx-background-color: transparent; 
+	-fx-background-image: url('../resources/undoClicked.png');
+	-fx-translate-y : +4;
+}
+#redo_arrow:pressed{
+	-fx-background-color: transparent; 
+	-fx-background-image: url('../resources/redoClicked.png');
+	-fx-translate-y : +4;
+}
+#edit_button:pressed{
+	-fx-background-color: transparent; 
+	-fx-background-image: url('../resources/editClicked.png');
+	-fx-translate-y : +4;
+}
+#erase_button:pressed{
+	-fx-background-color: transparent; 
+	-fx-background-image: url('../resources/eraseClicked.png');
+	-fx-translate-y : +4;
+}
+#help_button:pressed{
+	-fx-background-color: transparent; 
+	-fx-background-image: url('../resources/helpClicked.png');
+	-fx-translate-y : +4;
+}
+
+
+#undo_arrow,redo_arrow,edit_button,erase_button,help_button:released{
+	-fx-translate-y : -4;
+}
+
+.digitButton{
+	
+	 -fx-font-family: "Anja Eliane accent";
+	 -fx-font-size:16px;
+	 -fx-background-radius: 5em; 
+	 -fx-background-color:#fa8132;
+	 -fx-min-width: 35px;
+     -fx-min-height: 35px;
+     -fx-max-width: 35px;
+     -fx-max-height: 35px;
+}
+
+.paramButton{
+	 -fx-background-radius: 5em; 
+	 -fx-background-color: transparent;
+	 -fx-min-width: 35px;
+     -fx-min-height: 35px;
+     -fx-max-width: 35px;
+     -fx-max-height: 35px;
+}
+
+.paramLabel{
+	
+	 -fx-font-family: "Anja Eliane accent";
+	 -fx-font-size:12px;
+}
+
+.digitButton:hover, .digitButton:focus {
+  -fx-background-color: #d06828;
+}
+
+.digitButton:pressed{
+  -fx-background-color: #FFDF00;
+}
+
+.digitButton:released{
+  -fx-translate-y : -4;
+}
+
+#homeButton{
+	-fx-background-image: url('../resources/home1.png');
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#homeButton:pressed{
+	-fx-background-image: url('../resources/home1Clicked.png');
+	-fx-translate-y : +4;
+}
+
+#newGameButton{
+	-fx-background-image: url('../resources/newGame.png');
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#newGameButton:pressed{
+	-fx-background-image: url('../resources/newGameClicked.png');
+	-fx-translate-y : +4;
+}
+
+#settingsButton{
+	-fx-background-image: url('../resources/settings.png');
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#settingsButton:pressed{
+	-fx-background-image: url('../resources/settingsClicked.png');
+	-fx-translate-y : +4;
+}
+
+#difficultyButton{
+	-fx-background-image: url('../resources/difficulty.png');
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#difficultyButton:pressed{
+	-fx-background-image: url('../resources/difficultyClicked.png');
+	-fx-translate-y : +4;
+}
+
+.SettingsPane{
+	-fx-background-image: url('../resources/red_panel.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-size: 400px;
+	-fx-background-position: center center;
+  
+    /*-fx-effect: dropshadow( gaussian , white, 127, 127, 0, 0); */
+}
+
+.closeButton{
+	-fx-background-image: url('../resources/red_button.png');
+	-fx-background-color:transparent;
+	-fx-background-repeat: no-repeat;
+	-fx-background-size: 100% 100%;
+	-fx-font-family: "kenvector future";
+}
+
+.closeButton:pressed{
+	-fx-background-image: url('../resources/yellow_button.png');
+	-fx-translate-y : +4;
+}
+
+.closeButton:released{
+	-fx-translate-y : -4;
+}
+
+/* 
+#puzzle_title1,#puzzle_title2,#error_msg{
+	-fx-font-family: "kenvector future";
+}
+*/
