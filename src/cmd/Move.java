@@ -83,13 +83,18 @@ public class Move extends AbstractAction implements Action {
 					
 					node.getValue().addCandidate(node.getKey());}
 				if(v==SET_VALUE) {
-					node.getValue().setValue(null);
-				    node.getValue().unLock();
+					node.getValue().removeValue();
+				    //node.getValue().unLock();
 				    //on peut optimiser cette ligne on ajoutant le candidat dans les ca où il est été supprimmer 
-				    node.getValue().getGrid().generateAllCandidat();
+				   // node.getValue().getGrid().generateAllCandidat();
 				    }
 			} 
 		} 
 	}
+	
+	 public Cell getCell() {
+	        return actions.get(SET_VALUE).getMap().get(0).getValue();
+	        
+	    }
 	
 }

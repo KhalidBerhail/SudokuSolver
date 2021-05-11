@@ -20,6 +20,10 @@ public class MyMap<K,V> {
 		return map;
 	}
 	
+	public int size() {
+		return map.size();
+	}
+	
 	
 	
 	

@@ -128,12 +128,18 @@ public class StdCell implements Cell {
 
 	@Override
 	public void removeValue() {
-		if (!isLocked) {
-			String oldValue = this.currentValue;
-			this.currentValue = null;
-			pcs.firePropertyChange("VALUE_REMOVED", 
-					new PropertyChangeCell(this, oldValue, null), 
-					new PropertyChangeCell(this, null, null));
+		
+		if (isLocked) {
+			
+			if(currentValue!=null) {
+				char c = currentValue.charAt(0);
+				String oldValue= ""+c;
+				this.currentValue = null;
+				pcs.firePropertyChange("VALUE_REMOVED", 
+						new PropertyChangeCell(this, oldValue, null), 
+						new PropertyChangeCell(this, null, null));
+			}
+			
 		}
 	}
 

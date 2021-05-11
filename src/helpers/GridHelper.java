@@ -39,7 +39,7 @@ import java.util.Set;
 
 public class GridHelper {
 	 public static final String xmlFilePath = "solution.xml";
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		StdGrid board;
 	    Set<String> CANDIDATES;
@@ -180,6 +180,75 @@ public class GridHelper {
 		    }
 
 	}
+	*/public static void Solve(Grid board) {
+	    Move solution = null;
+	    boolean stop=false;
+		while(!stop) {
+			
+			 solution=new OneCandidate(board).getSolution();
+			
+			 
+			 if(solution==null || solution.getActions().size() == 0) {
+ 
+				 solution=new UniqueCandidate(board).getSolution();			
+				 
+			 }
+			 
+						
+			if(solution==null || solution.getActions().size() == 0) {
+				 solution=new IdenticalCandidates(board).getSolution();	 
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution=new TwinsAndTriplet(board).getSolution();
+				 
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution=new InteractionsBetweenRegion(board).getSolution();	 
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution=new IsolatedGroups(board).getSolution();	 
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new MixedGroups(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new Xwing(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new XyWing(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new Coloring(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new Burma(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new Squirmbag(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new Swordfish(board).getSolution();
+			 }
+			 if(solution==null || solution.getActions().size() == 0) {
+				 solution = new Jellyfish(board).getSolution();
+			 }
+			 if(solution!=null && solution.getActions().size() != 0) solution.act();
+			
+			 if(solution==null) {
+				 stop=true;
+			 }
+			 
+			 if(solution!=null) {
+				
+				 //System.out.println(solution.getDetails());
+				   // System.out.println("----------------------------");
+			 }
+			 
+			  System.out.println("----------------------------");
+			 
+		}
+	}
+	
 	public static StdGrid loadGrid() {
 		StdGrid board = null;
 	    Set<String> CANDIDATES;

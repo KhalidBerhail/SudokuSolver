@@ -15,7 +15,7 @@ public interface Grid  {
 	 static final int size = 9;
 	
 	
-	 
+	 StdGrid deepCopy(Grid grid);
 	
 	void setGrid(Cell[][] grille);
 	

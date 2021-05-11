@@ -196,7 +196,7 @@ public class TwinsAndTriplet  implements IHeuristic {
 	}
 	private String getDescription (int num,int numRegion,String c) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("twins and Triplet\n");
+		sb.append("twins and Triplet:\n");
 		sb.append("Le candidat '" + c + "'");
 		sb.append(" n'étant présent uniquement sur la ");
 		sb.append("ligne");

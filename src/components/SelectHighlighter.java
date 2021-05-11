@@ -148,5 +148,17 @@ public class SelectHighlighter implements Highlighter {
 			
 		}
 	}
+	
+	@Override
+	public void highlightWrongCell(Pane p) {
+		CustomPane wrong= (CustomPane)p;
+		wrong.setStyle(wrong.getStyle()+"-fx-background-color: rgba(255, 0, 13, .3);");
+	}
+	
+	@Override
+	public void highlightRightCell(Pane p) {
+		CustomPane wrong= (CustomPane)p;
+		wrong.setStyle(wrong.getStyle()+"-fx-background-color: rgba(71, 255, 139, .3);");
+	}
 
 }

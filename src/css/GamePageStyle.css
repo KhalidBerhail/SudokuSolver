@@ -143,16 +143,7 @@
 	-fx-translate-y : +4;
 }
 
-#newGameButton{
-	-fx-background-image: url('../resources/newGame.png');
-	-fx-background-size: 30px;
-	-fx-background-repeat: no-repeat;
-}
 
-#newGameButton:pressed{
-	-fx-background-image: url('../resources/newGameClicked.png');
-	-fx-translate-y : +4;
-}
 
 #settingsButton{
 	-fx-background-image: url('../resources/settings.png');
@@ -162,17 +153,6 @@
 
 #settingsButton:pressed{
 	-fx-background-image: url('../resources/settingsClicked.png');
-	-fx-translate-y : +4;
-}
-
-#difficultyButton{
-	-fx-background-image: url('../resources/difficulty.png');
-	-fx-background-size: 30px;
-	-fx-background-repeat: no-repeat;
-}
-
-#difficultyButton:pressed{
-	-fx-background-image: url('../resources/difficultyClicked.png');
 	-fx-translate-y : +4;
 }
 
@@ -202,6 +182,98 @@
 	-fx-translate-y : -4;
 }
 
+.dialogFlow{
+	-fx-background-color:#FFFFFF;
+}
+
+.wrongValueTitle{
+	-fx-text-fill: red;
+	-fx-font-family: "Anja Eliane accent";
+	-fx-font-size: 20px;
+	
+}
+
+.ProgressTitle{
+	-fx-text-fill: blue;
+	-fx-font-family: "Anja Eliane accent";
+	-fx-font-size: 20px;
+}
+
+.wrongValueMessage, .heuristiqueName{
+	-fx-text-fill: blue;
+	-fx-font-family: "Anja Eliane accent";
+	-fx-font-size: 10px;
+	
+}
+
+.fullySolved{
+	-fx-font-family: "Anja Eliane accent";
+	-fx-font-size: 20px;
+}
+
+.wrongPane{
+	
+}
+
+#solve_button{
+	-fx-background-image: url('../resources/solve2.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#solve_button:pressed{
+	-fx-background-image: url('../resources/solve2Clicked.png');
+	-fx-translate-y : +4;
+}
+
+#checkProgress_Button{
+	-fx-background-image: url('../resources/check2.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#checkProgress_Button:pressed{
+	-fx-background-image: url('../resources/check2Clicked.png');
+	-fx-translate-y : +4;
+}
+
+#saveFileButton{
+	-fx-background-image: url('../resources/saveFile.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#saveFileButton:pressed{
+	-fx-background-image: url('../resources/saveFileClicked.png');
+	-fx-translate-y : +4;
+}
+
+#newGameButton{
+	-fx-background-image: url('../resources/newGame1.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#newGameButton:pressed{
+	-fx-background-image: url('../resources/newGameClicked.png');
+	-fx-translate-y : +4;
+}
+
+#resetButton{
+	-fx-background-image: url('../resources/reset.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#resetButton:pressed{
+	-fx-background-image: url('../resources/resetClicked.png');
+	-fx-translate-y : +4;
+}
 /* 
 #puzzle_title1,#puzzle_title2,#error_msg{
 	-fx-font-family: "kenvector future";

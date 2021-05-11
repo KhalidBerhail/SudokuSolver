@@ -5,8 +5,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import cmd.Move;
+import helpers.CheckerFactory;
 import helpers.GridHelper;
 import heuristics.Burma;
 import heuristics.Coloring;
@@ -26,9 +28,11 @@ import model.Cell;
 import model.Grid;
 import model.StdCell;
 import model.StdGrid;
+import model.StdHistory;
 import components.CandidatGridPane;
 import components.CandidatPane;
 import components.CandidatTextField;
+import components.CustomGridPane;
 import components.CustomPane;
 import components.DefaultGridPane;
 import components.DefaultPane;
@@ -38,7 +42,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.Effect;
@@ -46,8 +54,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 public class GamePageController {
@@ -63,8 +74,7 @@ public class GamePageController {
     private Pane settingStack;
 	//TextArea
 	@FXML
-	private TextArea dialogArea;
-	
+    private TextFlow dialogFlow;
 	//Buttons
 
     @FXML
@@ -76,10 +86,6 @@ public class GamePageController {
     @FXML
     private Button homeButton;
     @FXML
-    private Button newGameButton;
-    @FXML
-    private Button difficultyButton;
-    @FXML
     private Button settingsButton;
     @FXML
     private Button redo_arrow;
@@ -87,15 +93,20 @@ public class GamePageController {
     private Button undo_arrow;
     @FXML
     private Button solve_button;
+    @FXML
+    private Button checkProgress_Button;
+    @FXML
+    private Button resetButton;
 	
 	private Grid grid;
 	private DefaultGridPane sudokuGrid;
 	private Pane[][] cellPanes;
 	private List<DefaultTextField> cells;
 	private List<CandidatGridPane> candidateGrids;
+	private StdHistory<Move> history;
 	
 	private boolean ishiden = false;
-	
+	private CheckerFactory checker  ;
 	public GamePageController() {
 		
 	}
@@ -106,6 +117,8 @@ public class GamePageController {
 		candidateGrids = new LinkedList<CandidatGridPane>();
 		cellPanes = new Pane[9][9];
 		grid = GridHelper.loadGrid();
+		checker=CheckerFactory.getInstance(grid);
+		history = new StdHistory<Move>(100);
 		createGraphicGrid();
 		addGridChangeListeners();
 		optionListeners();
@@ -226,6 +239,7 @@ public class GamePageController {
 				
 				if(selected) {
 					if(!ctf.getText().equals("")) {
+						
 						DefaultTextField candidat = new DefaultTextField(500/9,500/9);	
 						candidat.setCanEdit(true);
 						/**********************
@@ -236,9 +250,16 @@ public class GamePageController {
 						candidat.setPositionY(pane.getPositionY());
 						
 						candidat.appendText(ctf.getText());
-						grid.getCellAt(pane.getPositionX(),pane.getPositionY()).setValue(ctf.getText());
-						grid.getCellAt(pane.getPositionX(),pane.getPositionY()).lock();
-						grid.generateAllCandidat();
+						//grid.getCellAt(pane.getPositionX(),pane.getPositionY()).setValue(ctf.getText());
+						
+						Move mv = new Move();
+						mv.addAction(Move.SET_VALUE,grid.getCellAt(pane.getPositionX(), pane.getPositionY()), ctf.getText());
+						mv.act();
+						history.add(mv);
+						
+						/*if(checker.Check(pane.getPositionX(), pane.getPositionY())) {
+							System.out.println("bonne valeur");
+						}else System.out.println("mauvaise valeur");*/
 						
 						candidat.getModel().setCanEdit(true);
 						pane.getChildren().clear();
@@ -414,18 +435,8 @@ public class GamePageController {
                 	cell = (StdCell) c;
                 	cell.eliminateCandidate(value);
                 }
+                candidatesToValue((CustomPane)cellPanes[X][Y],value);
                 
-                cellPanes[X][Y].getChildren().clear();
-                
-                DefaultTextField DTF = new DefaultTextField(500/9,500/9);	
-				DTF.setCanEdit(true);
-				addDefaultFieldListeners(DTF);
-				DTF.setPositionX(X);
-				DTF.setPositionY(Y);
-				
-				DTF.appendText(value);
-				DTF.setStyle("-fx-text-fill: #fa8132;");
-				 cellPanes[X][Y].getChildren().add(DTF);
                 
 			}
 			
@@ -453,7 +464,9 @@ public class GamePageController {
                 	cell = (StdCell) c;
                 	cell.addCandidate(value);
                 }
-				
+                grid.getCellAt(X,Y).unLock();
+                /******for undo solve***
+                valueTocandidates((CustomPane)cellPanes[X][Y]);**/
 			}
 			
 		});
@@ -535,18 +548,13 @@ public class GamePageController {
 				
 				 Move solution = null;
 				    boolean stop=false;
+				   
+					int count = 0;
 					while(!stop) {
 						
 						 solution=new OneCandidate(grid).getSolution();
-						
-						 
 						 if(solution==null || solution.getActions().size() == 0) {
-							 
 							 solution=new UniqueCandidate(grid).getSolution();
-							 
-						
-							
-							 
 						 }
 						 
 									
@@ -587,16 +595,43 @@ public class GamePageController {
 						 if(solution==null || solution.getActions().size() == 0) {
 							 solution = new Jellyfish(grid).getSolution();
 						 }
-						 if(solution!=null && solution.getActions().size() != 0) solution.act();
+						 if(solution!=null && solution.getActions().size() != 0) {
+							 solution.act();
+							 history.add(solution);
+						 }
+							 
 						
 						 if(solution==null) {
 							 stop=true;
+						 } else {
+							 count++;
 						 }
 						 
 						 if(solution!=null) {
 							
-							 System.out.println(solution.getDetails());
-							    System.out.println("----------------------------");
+							 if(count==1) {
+								 dialogFlow.getChildren().clear();
+								 Text title = new Text("FullySolved\n");
+								 title.setFill(Color.GREEN);
+								 title.getStyleClass().add("fullySolved");
+								 dialogFlow.getChildren().add(title);
+							 }
+							 String s = solution.getDetails();
+							 String[] array = s.split(":");
+							 
+							
+							
+							Text heuristique = new Text(array[0]+":");
+							heuristique.setFill(Color.BLUE);
+							heuristique.getStyleClass().add("heuristiqueName");
+							
+							Text hint = new Text(array[1]+"\n");
+							hint.setFill(Color.BLACK);
+							hint.getStyleClass().add("heuristiqueMessage");
+							
+							
+							dialogFlow.getChildren().add(heuristique);
+							dialogFlow.getChildren().add(hint);
 						 }
 						 
 						
@@ -628,74 +663,139 @@ public class GamePageController {
 			@Override
 			public void handle(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				Move solution = null;
 				
- solution=new OneCandidate(grid).getSolution();
 				
-				 
-				 if(solution==null || solution.getActions().size() == 0) {
-					 
-					 solution=new UniqueCandidate(grid).getSolution();
-					 
+				//Checking if there is any cells with incorrect values 
+				Node paneChild;
+				int panePositionX;//customPane X positoion
+				int panePositionY;//customPane Y position
+				DefaultTextField wrong;//TextField with wrong value
+				boolean iswrong = false;
+				int count = 0;
 				
+				for(Pane[] array : cellPanes) {
+					for(Pane cellPane: array) {
+						paneChild = cellPane.getChildren().get(0); 
+						if(paneChild instanceof DefaultTextField) {
+							panePositionX = ((CustomPane) cellPane).getPositionX();
+							panePositionY = ((CustomPane) cellPane).getPositionY();
+							if(!checker.Check(panePositionX, panePositionY)) {
+								count++;
+								if(count==1) {
+									dialogFlow.getChildren().clear();
+									Text title = new Text("Hint!!");
+									title.getStyleClass().add("wrongValueTitle");
+									title.setFill(Color.RED);
+									dialogFlow.getChildren().add(title);
+								}
+								wrong = (DefaultTextField)cellPane.getChildren().get(0);
+								wrong.getHighlighter().highlightWrongCell(cellPane);
+								
+								
+								
+								Text message = new Text("\nmauvaise valeur: " + wrong.getText() 
+								                        +" AT: row:" + wrong.getPositionX()
+						                                +", column:" + wrong.getPositionY());
+								message.getStyleClass().add("wrongValueMessage");
+								
+								
+								dialogFlow.getChildren().add(message);
+								iswrong = true;
+							} 
+						}
+					}
+				}
+				
+				
+				
+				if(!iswrong) {
+					Move solution = null;
+					
+	                solution=new OneCandidate(grid).getSolution();
 					
 					 
-				 }
-				 
+					 if(solution==null || solution.getActions().size() == 0) {
+						 
+						 solution=new UniqueCandidate(grid).getSolution();
+					 }
+					 
+								
+					if(solution==null || solution.getActions().size() == 0) {
+						 solution=new IdenticalCandidates(grid).getSolution();	 
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution=new TwinsAndTriplet(grid).getSolution();
+						 
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution=new InteractionsBetweenRegion(grid).getSolution();	 
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution=new IsolatedGroups(grid).getSolution();	 
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new MixedGroups(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new Xwing(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new XyWing(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new Coloring(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new Burma(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new Squirmbag(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new Swordfish(grid).getSolution();
+					 }
+					 if(solution==null || solution.getActions().size() == 0) {
+						 solution = new Jellyfish(grid).getSolution();
+					 }
+					 if(solution!=null && solution.getActions().size() != 0) solution.act();
+					
+					/* if(solution==null) {
+						 stop=true;
+					 }*/
+					 
+					 if(solution!=null) {
+						    dialogFlow.getChildren().clear();
+						    Text title = new Text("Hint\n");
+							title.setFill(Color.GREEN);
+							title.getStyleClass().add("fullySolved");
+							dialogFlow.getChildren().add(title);
 							
-				if(solution==null || solution.getActions().size() == 0) {
-					 solution=new IdenticalCandidates(grid).getSolution();	 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution=new TwinsAndTriplet(grid).getSolution();
-					 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution=new InteractionsBetweenRegion(grid).getSolution();	 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution=new IsolatedGroups(grid).getSolution();	 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new MixedGroups(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Xwing(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new XyWing(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Coloring(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Burma(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Squirmbag(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Swordfish(grid).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Jellyfish(grid).getSolution();
-				 }
-				 if(solution!=null && solution.getActions().size() != 0) solution.act();
+							String s = solution.getDetails();
+							 String[] array = s.split(":");
+							 
+							
+							
+							Text heuristique = new Text(array[0]+":");
+							heuristique.setFill(Color.BLUE);
+							heuristique.getStyleClass().add("heuristiqueName");
+							
+							Text hint = new Text(array[1]+"\n");
+							hint.setFill(Color.BLACK);
+							hint.getStyleClass().add("heuristiqueMessage");
+							
+							
+							dialogFlow.getChildren().add(heuristique);
+							dialogFlow.getChildren().add(hint);
+						 
+					 }
+				}
 				
-				/* if(solution==null) {
-					 stop=true;
-				 }*/
-				 
-				 if(solution!=null) {
-					 dialogArea.appendText(solution.getDetails()+"\n"+"----------------------------\n");
-					 
-				 }
 				 
 				 
 			}
 			
 		});
-	
+	    //Click sur edit
 	    edit_button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -716,71 +816,142 @@ public class GamePageController {
 						}
 					}
 				}
+				 valueTocandidates(selectedPane);
+			}
+	    	
+	    });
+	    //Click sur progress
+	    checkProgress_Button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+                
+				Node paneChild;
+				int panePositionX;//customPane X positoion
+				int panePositionY;//customPane Y position
+				DefaultTextField cell;//TextField to check
+				int count = 0;
 				
-				if(selectedPane != null) {
-				   selectedChild = selectedPane.getChildren().get(0);
-				   if(selectedChild instanceof DefaultTextField) {
-					   DefaultTextField textField = (DefaultTextField) selectedChild;
-					   if(textField.getModel().canEdit()) {
-	        	 			//dtf.getModel().setCandidats(grid.getCellAt(dtf.getPositionX(),dtf.getPositionY()).getCandidates());
-	                    	 selectedPane = (CustomPane)textField.getParent();
-	        				CandidatGridPane gridPane = new  CandidatGridPane();
-	        				int[][]sample= {{1,2,3},{4,5,6},{7,8,9}};
-	        				gridPane.styleGridPane(0, 0);
-	        				CandidatGridPane existing;
-	        				
-	        				grid.getCellAt(textField.getPositionX(),textField.getPositionY()).unLock();
-	        				grid.getCellAt(textField.getPositionX(),textField.getPositionY()).removeValue();
-	        				//grid.getCellAt(dtf.getPositionX(),dtf.getPositionY()).setValue("");
-	        				
-	        				
-	        				for(int i=0; i<9;i++) {
-	        					grid.getCellAt(textField.getPositionX(), i).setCandidates(grid.getPossibleCandidat(textField.getPositionX(), i));
-	        					grid.getCellAt(i,textField.getPositionY()).setCandidates(grid.getPossibleCandidat(i,textField.getPositionY()));
-	        					if(i!=textField.getPositionX() || i!=textField.getPositionY()) {
-	        						if((cellPanes[textField.getPositionX()][i] instanceof CandidatGridPane)) {
-	        							existing = (CandidatGridPane) cellPanes[textField.getPositionX()][i].getChildren().get(0);
-	        							//existing.appendCandidat(dtf.getText());
-	        						}
-	        						
-	        						if((cellPanes[textField.getPositionY()][i] instanceof CandidatGridPane)) {
-	        							existing = (CandidatGridPane) cellPanes[i][textField.getPositionY()].getChildren().get(0);
-	        							//existing.appendCandidat(dtf.getText());
-	        						}
-	        					}
-	        				}
-	        				
-	        				for(Cell c : grid.getRegion(textField.getPositionX(), textField.getPositionY())) {
-	        					c.setCandidates(grid.getPossibleCandidat(c.getCoordinate().getX(), c.getCoordinate().getY()));
-	        					if((cellPanes[c.getCoordinate().getX()][c.getCoordinate().getY()] instanceof CandidatGridPane)) {
-	    							existing = (CandidatGridPane) cellPanes[c.getCoordinate().getX()][c.getCoordinate().getY()].getChildren().get(0);
-	    							//existing.appendCandidat(dtf.getText());
-	    						}
-	        				}
-	        			
-	        				for(int j=0; j<3;j++) {
-	        					for(int i=0; i<3;i++) {
-	        						//CandidatPane CP = new CandidatPane();
-	        						CandidatTextField CTF = new CandidatTextField(20,20);
-	        						CTF.setBackground(Background.EMPTY);
-	        						CTF.setEditable(false);
-	        						addCandidatFieldListeners(CTF);
-	        						if(grid.getCellAt(textField.getPositionX(),textField.getPositionY()).getCandidates().contains(""+sample[j][i])) {
-	        							CTF.appendText(""+sample[j][i]);
-	        							CTF.setFont(Font.font("Verdana", FontWeight.BOLD, 8));
-	        						}
-	        						//CP.getChildren().add(CTF);
-	        						gridPane.add(CTF, i, j);
-	        					}
-	        				}
-	        				gridPane.setPositionX(selectedPane.getPositionX());
-	        				gridPane.setPositionY(selectedPane.getPositionY());
-	        	 			gridPane.addEventHandlers(cellPanes);
-	                    	selectedPane.getChildren().clear();
-	        				selectedPane.getChildren().add(gridPane);
+				
+				for(Pane[] array : cellPanes) {
+					for(Pane cellPane: array) {
+						paneChild = cellPane.getChildren().get(0); 
+						if(paneChild instanceof DefaultTextField && ((DefaultTextField) paneChild).canEdit()) {
+							panePositionX = ((CustomPane) cellPane).getPositionX();
+							panePositionY = ((CustomPane) cellPane).getPositionY();
+							if(!checker.Check(panePositionX, panePositionY)) {
+								count++;
+								if(count==1) {
+									dialogFlow.getChildren().clear();
+									Text title = new Text("Progress:");
+									title.getStyleClass().add("ProgressTitle");
+									title.setFill(Color.BLUE);
+									dialogFlow.getChildren().add(title);
+								}
+								cell = (DefaultTextField)cellPane.getChildren().get(0);
+								cell.getHighlighter().highlightWrongCell(cellPane);
+							
+								
+								
+								
+								Text message = new Text("\nmauvaise valeur: " + cell.getText() 
+								                        +" AT: row:" + cell.getPositionX()
+						                                +", column:" + cell.getPositionY());
+								message.getStyleClass().add("wrongValueMessage");
+								
+								
+								dialogFlow.getChildren().add(message);
+								
+							} else {
+								
+								if(count==1) {
+									dialogFlow.getChildren().clear();
+									Text title = new Text("Progress:");
+									title.getStyleClass().add("ProgressTitle");
+									title.setFill(Color.BLUE);
+									dialogFlow.getChildren().add(title);
+								}
+								
+								cell = (DefaultTextField)cellPane.getChildren().get(0);
+								cell.getHighlighter().highlightRightCell(cellPane);
+								
+								
+								
+								Text message = new Text("\nBonne valeur: " + cell.getText() 
+								                        +" AT: row:" + cell.getPositionX()
+						                                +", column:" + cell.getPositionY());
+								message.getStyleClass().add("wrongValueMessage");
+								
+								
+								dialogFlow.getChildren().add(message);
+								
+							}
 						}
-				   }
+					}
 				}
+				
+			}
+	    	
+	    });
+	    //clique sur reset
+	    resetButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Reset Confirmation");
+				alert.setHeaderText("By reseting the grid you will loose all the progress you made ");
+				alert.setContentText("Are you sure you want to reset the puzzle?");
+                ButtonType confirm = new ButtonType("Confirm",ButtonData.OK_DONE);
+                ButtonType cancel = new ButtonType("Cancel",ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(confirm,cancel);
+                
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.get() == confirm){
+				    
+				} else {
+				    // ... user chose CANCEL or closed the dialog
+				}
+				
+			}
+	    	
+	    });
+	        
+	    //clique redo
+	    redo_arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				history.getCurrentElement().act();
+				history.goForward();
+			}
+	    	
+	    });
+	    
+	  //clique undo
+	    undo_arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				Move mv = history.getCurrentElement();
+				mv.act();
+				history.goBackward();
+				Cell x = mv.getCell();
+				int posX = x.getCoordinate().getX();
+				int posY = x.getCoordinate().getY();
+				String val = mv.getCell().getValue();
+				
+				if(mv.getActions().get(Move.SET_VALUE) != null) {
+					
+					
+					valueTocandidates((CustomPane)cellPanes[posX][posY]);
+					System.out.println("setvalue");
+				} else if(mv.getActions().get(Move.ELIMINATE_CANDIDAT)!= null) {
+					System.out.println("eliminate");
+					candidatesToValue((CustomPane)cellPanes[posX][posY],val);
+				}
+				 
 				
 			}
 	    	
@@ -812,4 +983,95 @@ void ShowParamMenu(MouseEvent event) {
 		transition.play();
 		ishiden = !ishiden;
     }
+
+public void valueTocandidates(CustomPane selectedPane) {
+	//CustomPane selectedPane = null;
+	Node selectedChild;
+	
+	
+	
+	if(selectedPane != null) {
+	   selectedChild = selectedPane.getChildren().get(0);
+	   if(selectedChild instanceof DefaultTextField) {
+		   DefaultTextField textField = (DefaultTextField) selectedChild;
+		   if(textField.getModel().canEdit()) {
+	 			//dtf.getModel().setCandidats(grid.getCellAt(dtf.getPositionX(),dtf.getPositionY()).getCandidates());
+            	 selectedPane = (CustomPane)textField.getParent();
+				CandidatGridPane gridPane = new  CandidatGridPane();
+				int[][]sample= {{1,2,3},{4,5,6},{7,8,9}};
+				gridPane.styleGridPane(0, 0);
+				CandidatGridPane existing;
+				
+				
+				grid.getCellAt(textField.getPositionX(),textField.getPositionY()).removeValue();
+				
+				//grid.getCellAt(dtf.getPositionX(),dtf.getPositionY()).setValue("");
+				
+				
+				for(int i=0; i<9;i++) {
+					grid.getCellAt(textField.getPositionX(), i).setCandidates(grid.getPossibleCandidat(textField.getPositionX(), i));
+					grid.getCellAt(i,textField.getPositionY()).setCandidates(grid.getPossibleCandidat(i,textField.getPositionY()));
+					if(i!=textField.getPositionX() || i!=textField.getPositionY()) {
+						if((cellPanes[textField.getPositionX()][i] instanceof CandidatGridPane)) {
+							existing = (CandidatGridPane) cellPanes[textField.getPositionX()][i].getChildren().get(0);
+							//existing.appendCandidat(dtf.getText());
+						}
+						
+						if((cellPanes[textField.getPositionY()][i] instanceof CandidatGridPane)) {
+							existing = (CandidatGridPane) cellPanes[i][textField.getPositionY()].getChildren().get(0);
+							//existing.appendCandidat(dtf.getText());
+						}
+					}
+				}
+				
+				for(Cell c : grid.getRegion(textField.getPositionX(), textField.getPositionY())) {
+					c.setCandidates(grid.getPossibleCandidat(c.getCoordinate().getX(), c.getCoordinate().getY()));
+					if((cellPanes[c.getCoordinate().getX()][c.getCoordinate().getY()] instanceof CandidatGridPane)) {
+						existing = (CandidatGridPane) cellPanes[c.getCoordinate().getX()][c.getCoordinate().getY()].getChildren().get(0);
+						//existing.appendCandidat(dtf.getText());
+					}
+				}
+			
+				for(int j=0; j<3;j++) {
+					for(int i=0; i<3;i++) {
+						//CandidatPane CP = new CandidatPane();
+						CandidatTextField CTF = new CandidatTextField(20,20);
+						CTF.setBackground(Background.EMPTY);
+						CTF.setEditable(false);
+						addCandidatFieldListeners(CTF);
+						if(grid.getCellAt(textField.getPositionX(),textField.getPositionY()).getCandidates().contains(""+sample[j][i])) {
+							CTF.appendText(""+sample[j][i]);
+							CTF.setFont(Font.font("Verdana", FontWeight.BOLD, 8));
+						}
+						//CP.getChildren().add(CTF);
+						gridPane.add(CTF, i, j);
+					}
+				}
+				gridPane.setPositionX(selectedPane.getPositionX());
+				gridPane.setPositionY(selectedPane.getPositionY());
+	 			gridPane.addEventHandlers(cellPanes);
+            	selectedPane.getChildren().clear();
+				selectedPane.getChildren().add(gridPane);
+			}
+	   }
+	}
+}
+
+public void candidatesToValue(CustomPane selectedPane ,String value) {
+	
+	int X = selectedPane.getPositionX();
+	int Y = selectedPane.getPositionY();
+	cellPanes[X][Y].getChildren().clear();
+    
+    DefaultTextField DTF = new DefaultTextField(500/9,500/9);	
+	DTF.setCanEdit(true);
+	addDefaultFieldListeners(DTF);
+	DTF.setPositionX(X);
+	DTF.setPositionY(Y);
+	
+	DTF.appendText(value);
+	DTF.setStyle("-fx-text-fill: #fa8132;");
+	 cellPanes[X][Y].getChildren().add(DTF);
+}
+
 }

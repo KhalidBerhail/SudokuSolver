@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,6 +14,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
 
 <AnchorPane stylesheets="@../css/GamePageStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GamePageController">
    <children>
@@ -25,7 +26,6 @@
                </image>
             </ImageView>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#fffffff4" height="504.0" layoutX="550.0" layoutY="72.0" stroke="#fa8132" strokeType="OUTSIDE" strokeWidth="3.0" width="410.0" />
-            <TextArea fx:id="dialogArea" layoutX="564.0" layoutY="445.0" prefHeight="111.0" prefWidth="383.0" />
             <HBox alignment="CENTER" layoutX="720.0" layoutY="377.0" prefHeight="51.0" prefWidth="216.0" spacing="25.0">
                <children>
                   <Button fx:id="edit_button" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="55.0" style="-fx-background-color: transparent;" />
@@ -54,30 +54,30 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="55.0" prefWidth="76.0">
-                     <children>
-                        <Button fx:id="newGameButton" mnemonicParsing="false" styleClass="paramButton" />
-                        <Label prefHeight="16.0" prefWidth="69.0" styleClass="paramLabel" text="New Game">
-                           <font>
-                              <Font size="11.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="55.0" prefWidth="57.0">
-                     <children>
-                        <Button fx:id="difficultyButton" mnemonicParsing="false" styleClass="paramButton" />
-                        <Label prefHeight="16.0" prefWidth="53.0" styleClass="paramLabel" text="Difficulty">
-                           <font>
-                              <Font size="11.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
                   <VBox alignment="CENTER" layoutX="155.0" layoutY="10.0" prefHeight="51.0" prefWidth="55.0">
                      <children>
                         <Button fx:id="settingsButton" mnemonicParsing="false" onMouseClicked="#showSettingsMenu" styleClass="paramButton" />
                         <Label prefHeight="16.0" prefWidth="49.0" styleClass="paramLabel" text="Settings">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="50.0" prefWidth="60.0">
+                     <children>
+                        <Button fx:id="solve_button" mnemonicParsing="false" styleClass="paramButton" />
+                        <Label prefHeight="16.0" prefWidth="38.0" styleClass="paramLabel" text="Solve">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="104.0" prefWidth="55.0">
+                     <children>
+                        <Button fx:id="checkProgress_Button" mnemonicParsing="false" styleClass="paramButton" />
+                        <Label prefHeight="16.0" prefWidth="58.0" styleClass="paramLabel" text="progress">
                            <font>
                               <Font size="11.0" />
                            </font>
@@ -113,17 +113,55 @@
                   <Font size="11.0" />
                </font>
             </Label>
-            <Button fx:id="solve_button" layoutX="62.0" layoutY="591.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Solve" />
             <StackPane fx:id="settingStack" layoutY="-660.0" prefHeight="654.0" prefWidth="1000.0">
                <children>
                   <Pane fx:id="blurPane" blendMode="SCREEN" prefHeight="654.0" prefWidth="1000.0" style="-fx-background-color: grey;" styleClass="blurPane" />
                   <Pane fx:id="settingsPane" prefHeight="654.0" prefWidth="1000.0" styleClass="SettingsPane">
                      <children>
                         <Button fx:id="closeSettings" layoutX="405.0" layoutY="441.0" mnemonicParsing="false" onMouseClicked="#showSettingsMenu" prefHeight="50.0" prefWidth="191.0" styleClass="closeButton" text="Close" />
+                        <HBox alignment="CENTER" layoutX="347.0" layoutY="254.0" prefHeight="104.0" prefWidth="307.0" spacing="20.0">
+                           <children>
+                              <VBox alignment="CENTER" maxHeight="50.0" maxWidth="69.0" minHeight="50.0" minWidth="60.0" prefHeight="50.0" prefWidth="69.0">
+                                 <children>
+                                    <Button fx:id="resetButton" mnemonicParsing="false" styleClass="paramButton" />
+                                    <Label prefHeight="16.0" prefWidth="39.0" styleClass="paramLabel" text="Reset">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" maxHeight="50.0" maxWidth="69.0" minHeight="50.0" minWidth="60.0" prefHeight="50.0" prefWidth="69.0">
+                                 <children>
+                                    <Button fx:id="newGameButton" mnemonicParsing="false" styleClass="paramButton" />
+                                    <Label prefHeight="16.0" prefWidth="70.0" styleClass="paramLabel" text="New Game">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" maxHeight="50.0" maxWidth="60.0" minHeight="50.0" minWidth="60.0" prefHeight="50.0" prefWidth="60.0">
+                                 <children>
+                                    <Button fx:id="saveFileButton" mnemonicParsing="false" styleClass="paramButton" />
+                                    <Label prefHeight="16.0" prefWidth="54.0" styleClass="paramLabel" text="Save file">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                   </Pane>
                </children>
             </StackPane>
+            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="562.0" layoutY="451.0" prefHeight="111.0" prefWidth="383.0">
+               <content>
+                  <TextFlow fx:id="dialogFlow" prefHeight="111.0" prefWidth="383.0" style="-fx-background-color: WHITE; -fx-border-color: #bab1b1; -fx-border-radius: 3;" styleClass="dialogFlow" />
+               </content>
+            </ScrollPane>
          </children></Pane>
    </children>
 </AnchorPane>

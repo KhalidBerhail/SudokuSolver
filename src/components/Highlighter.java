@@ -22,4 +22,6 @@ public interface Highlighter {
 	public void undoSelectionHighLight(int X, int Y);
 	
 	public void undoCellSelections();
+	public void highlightWrongCell(Pane p);
+	public void highlightRightCell(Pane p);
 }

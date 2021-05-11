@@ -62,7 +62,32 @@ public class StdGrid  implements Grid {
 		// TODO Auto-generated method stub
 		this.cells=grille;
 	}
-	
+	@Override
+	public StdGrid deepCopy(Grid grid) {
+		// TODO Auto-generated method stub
+		StdGrid copy = new StdGrid();
+		Cell[][] cellsCopy = new Cell[size][size];
+		
+
+		Coordinate coor ;
+		for(Cell[] c:cells) {
+			for(Cell cc : c) {
+				coor = cc.getCoordinate();
+				
+				cellsCopy[coor.getX()][coor.getY()] =new  StdCell( new StdCoordinate(coor.getX(),coor.getY()));
+				cellsCopy[coor.getX()][coor.getY()].setCandidates( new HashSet<>(cc.getCandidates()));
+				cellsCopy[coor.getX()][coor.getY()].setValue(cc.getValue());
+				if(cc.isLocked()) cellsCopy[coor.getX()][coor.getY()].lock();
+				else cellsCopy[coor.getX()][coor.getY()].unLock();
+				cellsCopy[coor.getX()][coor.getY()].setGrid(copy);
+				
+				 
+								
+			}
+		}
+		copy.setGrid(cellsCopy);
+		return copy;
+	}
 	
 	@Override
 	public Cell getCellAt(int x, int y) {
