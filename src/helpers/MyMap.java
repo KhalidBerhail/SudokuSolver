@@ -19,7 +19,16 @@ public class MyMap<K,V> {
 	public List<Node<K,V>> getMap() {
 		return map;
 	}
-	
+	public K getKey(V value) {
+		for(Node<K,V> node : map) {
+			if(node.getValue()==value) {
+				return  node.getKey();
+			}
+		}
+		return null;
+		
+		
+	}
 	public int size() {
 		return map.size();
 	}

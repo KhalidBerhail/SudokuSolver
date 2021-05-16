@@ -39,6 +39,8 @@ import java.util.Set;
 
 public class GridHelper {
 	 public static final String xmlFilePath = "solution.xml";
+	 private static  Grid grid;
+	 
 /*	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		StdGrid board;
@@ -317,6 +319,7 @@ public class GridHelper {
 		    } catch (Exception e) {
 		    e.printStackTrace();
 		    }
+		grid = board.deepCopy(board);
 		return board;
 	}
 	  
@@ -371,5 +374,142 @@ public class GridHelper {
 	    	else return string;
 	    }
 	
+	    
+	    public static Grid getInitialGrid(){
+	    	return grid.deepCopy(grid);
+	    }
+	    
+	    public static StdGrid loadGridByDif(Difficulty dif) {
+
+	    	switch(dif) {
+	    	case EASY:
+	    		return loadGrid(Difficulty.EASY.getPath());
+	    	case MEDUIM: 
+	    		return loadGrid(Difficulty.MEDUIM.getPath());
+	    	case HARD: 
+	    		return loadGrid(Difficulty.HARD.getPath());
+	    	default:
+	    		throw new IllegalArgumentException("the heck this shit doesn't exist putain T_T :" + dif.name());
+	    	}
+
+	    		
+	    	}
+	    	public static StdGrid loadGrid(String path) {
+	    		StdGrid board = null;
+	    	    Set<String> CANDIDATES;
+	    		Cell[][] grille = new Cell[9][9];
+	    		  
+	    		CANDIDATES = new LinkedHashSet<String>();
+	    		CANDIDATES.add("1");
+	    		CANDIDATES.add("2");
+	    		CANDIDATES.add("3");
+	    		CANDIDATES.add("4");
+	    		CANDIDATES.add("5");
+	    		CANDIDATES.add("6");
+	    		CANDIDATES.add("7");
+	    		CANDIDATES.add("8");
+	    		CANDIDATES.add("9");
+
+	    		try {
+
+	    		    File fXmlFile = new File(path);
+	    		    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	    		    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+	    		    Document doc = dBuilder.parse(fXmlFile);
+	    		        
+	    		    
+	    		    doc.getDocumentElement().normalize();
+
+	    		    System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+	    		    NodeList nList = doc.getElementsByTagName("Row");
+	                
+	    		    System.out.println("----------------------------");
+	    		    String[][] row= new String[9][9];
+	    		    for (int temp = 0; temp < nList.getLength(); temp++) {
+	                     
+	    		        Node nNode = nList.item(temp);
+	    		        System.out.println("\n"+nNode.getTextContent());
+	    		        
+	    		        row[temp] = nNode.getTextContent().toString().split(",");
+	    		      
+	    		        
+	    		    }
+	    		    for (int i = 0; i < 9; i++) {
+	    		      for(int j=0;j<nList.getLength();j++) {
+	    	        	
+	    	        	  grille[i][j] = new StdCell(new StdCoordinate(i,j));
+	    	        	  if(!row[i][j].equals("-")) {
+	    	        		  grille[i][j].setValue(row[i][j]); 
+	    	        		  grille[i][j].lock();
+	    	        	  } 
+	    	          }
+	    		    }
+	    		    
+	    		    board = new StdGrid(CANDIDATES,grille);
+	    		    board.generateAllCandidat();
+	    		    for(int i=0;i<9;i++) {
+	    		    	for(int j=0;j<9;j++) {
+	    		    		board.getCellAt(i, j).setGrid(board);
+	    			    }
+	    		    }
+	    		
+	    		    
+	    		   
+	    		    
+	    		  
+	    		    
+	    		   
+	    		    } catch (Exception e) {
+	    		    e.printStackTrace();
+	    		    }
+	    		return board;
+	    	}
+	    	
+	    	public static void Save (Cell[][] grille,String Path) {
+	    	     
+	            try {
+	     
+	                DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+	     
+	                DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+	     
+	                Document document = documentBuilder.newDocument();
+	     
+	        
+	                Element root = document.createElement("Sudoku");
+	                document.appendChild(root);
+	     
+	             
+	                Element hints = document.createElement("Hints");
+	     
+	                root.appendChild(hints);
+	     
+	                Element rows = document.createElement("Rows");
+	        
+	                hints.appendChild(rows);
+	                StringBuilder myRow;
+	                for(int i=0;i<9;i++) {
+	                    myRow=new StringBuilder();
+	                    Element row = document.createElement("Row");
+	                     for(int j=0;j<9;j++) {
+	                                 myRow.append(checkVal(grille[i][j].getValue())+",");
+	                           }
+	                     row.appendChild(document.createTextNode(myRow.toString()));
+	                     rows.appendChild(row);
+
+	                }
+	                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+	                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+	                StreamResult result = new StreamResult(new File(Path));
+	                DOMSource source = new DOMSource(document);
+	                transformer.transform(source, result);
+	     
+	            } catch (ParserConfigurationException pce) {
+	                pce.printStackTrace();
+	            } catch (TransformerException tfe) {
+	                tfe.printStackTrace();
+	            }
+	        }
 	}
 

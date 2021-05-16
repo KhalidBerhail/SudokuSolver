@@ -75,6 +75,26 @@ public class CandidatGridPane extends CustomGridPane {
 		ctf.appendText(s);
 		
 	}
+	public void clearnCandidat(String s) {
+		int x = Integer.parseInt(s);
+		CandidatTextField ctf;
+		CandidatGridPane gp;
+		int line;
+		int col;
+		if(x%3!=0) {
+			line = x/3;
+			col = x%3 - 1;
+			
+		
+		}else {
+			line = x/3 - 1;
+			col = 2;
+		}
+		
+		ctf = (CandidatTextField)this.getGridCell(col, line);
+		ctf.clear();
+		
+	}
 	
 	public CandidatTextField getGridCell(int col, int row) {
 	    for (Node node : this.getChildren()) {

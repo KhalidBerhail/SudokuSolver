@@ -1,5 +1,8 @@
 package components;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javafx.scene.layout.Pane;
 
 public class SelectHighlighter implements Highlighter {
@@ -29,7 +32,7 @@ public class SelectHighlighter implements Highlighter {
 		// TODO Auto-generated method stub
 		CustomPane pane;
 	    pane = (CustomPane)P;
-	    if(!pane.getModel().isSelected()) {
+	    if(!pane.getModel().isSelected() && !pane.isChecked()) {
 	    	P.setStyle("-fx-background-color:#CDCDCD;"+pane.stylePane(pane.getPositionX(), pane.getPositionY()));
 	    }
 		
@@ -93,7 +96,7 @@ public class SelectHighlighter implements Highlighter {
 		// TODO Auto-generated method stub
 		CustomPane pane;
 	    pane = (CustomPane)P;
-		if(!pane.getModel().isSelected() && !pane.getModel().isHovered()) {
+		if(!pane.getModel().isSelected() && !pane.getModel().isHovered() && !pane.isChecked()) {
 			pane.stylePane(pane.getPositionX(), pane.getPositionY());
 		}
 	}
@@ -159,6 +162,40 @@ public class SelectHighlighter implements Highlighter {
 	public void highlightRightCell(Pane p) {
 		CustomPane wrong= (CustomPane)p;
 		wrong.setStyle(wrong.getStyle()+"-fx-background-color: rgba(71, 255, 139, .3);");
+	}
+	
+	public void undoCheckHighlight(CustomPane p) {
+		
+		int x = p.getPositionX();
+		int y = p.getPositionY();
+		if(p.isChecked()) {
+			if(p.getModel().isHovered() || p.getModel().isSelected()) {
+				p.setStyle(cellPanes[x][y].getStyle()+"-fx-background-color: #CDCDCD;");
+			} else{
+				p.stylePane(x,y);
+			}
+		}
+		
+		
+		
+	}
+	
+	public void highlightReason(CustomPane p) {
+		int x = p.getPositionX();
+		int y = p.getPositionY();
+		
+		 p.setStyle(p.getStyle()+"-fx-background-color:  rgba(0, 255, 221, .3);");
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	  p.stylePane(x,y);
+		            }
+		        }, 
+		        2500 
+		);
+		
+		
 	}
 
 }

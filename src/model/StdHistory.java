@@ -58,7 +58,7 @@ public class StdHistory<E> implements History<E> {
 		return (this.head.size() == this.maxHeight);
 	}
 	
-	private boolean tailIsEmpty() {
+	public boolean tailIsEmpty() {
 		return (this.tail.size() == 0);
 	}
 	
@@ -91,7 +91,8 @@ public class StdHistory<E> implements History<E> {
 		if (this.getCurrentPosition() >= this.getEndPosition()) {
 			throw new AssertionError("goForward error position: StdHistory");
 		}
-		this.head.addFirst(this.tail.remove());
+		E e =this.tail.remove();
+		this.head.addFirst(e);
 		checkPCL();
 	}
 	

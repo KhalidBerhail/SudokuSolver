@@ -13,6 +13,7 @@ public abstract class CustomPane extends Pane{
 	private boolean selected;
 	private PaneModel model;
 	private SelectHighlighter highlighter;
+	private boolean checked = false;
 	
 	public CustomPane() {
 		super();
@@ -104,5 +105,17 @@ public abstract class CustomPane extends Pane{
 	
 	public SelectHighlighter getHighlighter() {
 		return highlighter;
+	}
+
+
+
+	public boolean isChecked() {
+		return checked;
+	}
+
+
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 }

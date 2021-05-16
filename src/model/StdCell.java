@@ -37,6 +37,14 @@ public class StdCell implements Cell {
 		pcs = new PropertyChangeSupport(this);
 		isLocked = false;
 	}
+	public StdCell(Cell cell) {
+		this.currentValue = cell.getValue().toString();
+		this.coord = cell.getCoordinate();
+		this.candidates = cell.getCandidates();
+		this.currentGrid = cell.getGrid();
+		pcs = new PropertyChangeSupport(this);
+		isLocked = cell.isLocked();
+	}
 	
 	// REQUETES
 

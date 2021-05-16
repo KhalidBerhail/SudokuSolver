@@ -30,8 +30,9 @@ import model.Cell;
 public abstract class AbstractAction implements Action {
 	
 	// ATTRIBUTS
-	public static String ELIMINATE_CANDIDAT = "eleminate";
-	public static String SET_VALUE = "set_value"; 
+	public static final String ELIMINATE_CANDIDAT = "eleminate";
+	public static final String SET_VALUE = "set_value"; 
+	public static final String REMOVE_VALUE = "remove_value";
 	protected Map<String, MyMap<String,Cell> > actions ;
 	protected List<Cell> reasons ; 
 	protected String details = null ; 

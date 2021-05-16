@@ -53,15 +53,30 @@ public class Move extends AbstractAction implements Action {
 		for(String v :actions.keySet()) {
 			
 			for(Node<String,Cell> node :actions.get(v).getMap()) {
-				if(v==ELIMINATE_CANDIDAT) {
-					 node.getValue();
-					
-					node.getValue().eliminateCandidate(node.getKey());}
-				if(v==SET_VALUE) {
+				switch (v) {
+				case ELIMINATE_CANDIDAT: {
+					 
+					node.getValue().eliminateCandidate(node.getKey());
+					break;
+				}
+				case SET_VALUE: {
 					node.getValue().setValue(node.getKey());
 				    node.getValue().lock();
 				    node.getValue().getGrid().generateAllCandidat();
-				    }
+				    break;
+				}
+				case REMOVE_VALUE: {
+					node.getValue().removeValue();
+					node.getValue().getGrid().generateAllCandidat();
+				   break;
+				}
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + v);
+					
+				}
+				
+				
+				
 			} 
 		} 
 		
@@ -78,23 +93,39 @@ public class Move extends AbstractAction implements Action {
 		for(String v :actions.keySet()) {
 			
 			for(Node<String,Cell> node :actions.get(v).getMap()) {
-				if(v==ELIMINATE_CANDIDAT) {
-					 node.getValue();
+				switch (v) {
+				case ELIMINATE_CANDIDAT: {
 					
-					node.getValue().addCandidate(node.getKey());}
-				if(v==SET_VALUE) {
+					node.getValue().addCandidate(node.getKey());
+					break;
+				}
+				case SET_VALUE: {
 					node.getValue().removeValue();
-				    //node.getValue().unLock();
-				    //on peut optimiser cette ligne on ajoutant le candidat dans les ca où il est été supprimmer 
-				   // node.getValue().getGrid().generateAllCandidat();
-				    }
+				    break;
+				}
+				case REMOVE_VALUE: {
+					node.getValue().setValue(node.getKey());
+				    node.getValue().lock();
+				    node.getValue().getGrid().generateAllCandidat();
+				   break;
+				}
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + v);
+					
+				}
+			
 			} 
 		} 
 	}
 	
 	 public Cell getCell() {
+		 if(actions.containsKey(REMOVE_VALUE)) {
+			 return actions.get(REMOVE_VALUE).getMap().get(0).getValue();
+		 }
+		 if(actions.containsKey(SET_VALUE)) {
 	        return actions.get(SET_VALUE).getMap().get(0).getValue();
-	        
+		 }
+		 else return null;
 	    }
 	
 }
