@@ -209,7 +209,7 @@ public class StdCell implements Cell {
 		private String value;
 		private String candidate;
 		
-		private PropertyChangeCell(Cell _cell, String _value, String _candidate) {
+		public PropertyChangeCell(Cell _cell, String _value, String _candidate) {
 			cell = _cell;
 			value = _value;
 			candidate = _candidate;
@@ -231,8 +231,7 @@ public class StdCell implements Cell {
 	@Override
 	public void setCandidates(Set<String> candidats) {
 		candidates=candidats;
+	
 	}
-
-
 
 }

@@ -35,8 +35,8 @@ import java.beans.PropertyChangeListener;
  */
 public interface History<E> {
 
-	public static final String PROP_UNDO = "canUndo";
-	public static final String PROP_REDO = "canRedo";
+	public static final String PROP_UNDO = "Undo";
+	public static final String PROP_REDO = "Redo";
     
     // REQUETES
     

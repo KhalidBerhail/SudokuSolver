@@ -29,12 +29,7 @@ public class CandidatGridPane extends CustomGridPane {
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	   		@Override
 	   		public void handle(MouseEvent arg0) {
-	   			// TODO Auto-generated method stub
-	   			
 	   			setCursor(Cursor.DEFAULT);
-	   			/************OLD HIGHLIGHTER
-	   			 * highlighter.highLightSelection(getPositionX(),getPositionY());
-	   			 */
 	   			highlighter.highLightCellHovered((Pane)getParent());
 	   		}
 	   	   });
@@ -43,11 +38,6 @@ public class CandidatGridPane extends CustomGridPane {
 
 	   		@Override
 	   		public void handle(MouseEvent arg0) {
-	   			// TODO Auto-generated method stub
-	   		   
-	   			/*********OLD HIGHLIGHTER
-	   			 * highlighter.undoSelectionHighLight(getPositionX(),getPositionY());
-	   			 */
 	   			highlighter.undoCellHighLight((Pane)getParent());
 	   		}
 	   		   
@@ -57,7 +47,6 @@ public class CandidatGridPane extends CustomGridPane {
 	public void appendCandidat(String s) {
 		int x = Integer.parseInt(s);
 		CandidatTextField ctf;
-		CandidatGridPane gp;
 		int line;
 		int col;
 		if(x%3!=0) {
@@ -78,7 +67,6 @@ public class CandidatGridPane extends CustomGridPane {
 	public void clearnCandidat(String s) {
 		int x = Integer.parseInt(s);
 		CandidatTextField ctf;
-		CandidatGridPane gp;
 		int line;
 		int col;
 		if(x%3!=0) {

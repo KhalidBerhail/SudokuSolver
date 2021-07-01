@@ -1,5 +1,6 @@
 package components;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -185,17 +186,15 @@ public class SelectHighlighter implements Highlighter {
 		int y = p.getPositionY();
 		
 		 p.setStyle(p.getStyle()+"-fx-background-color:  rgba(0, 255, 221, .3);");
-		new java.util.Timer().schedule( 
-		        new java.util.TimerTask() {
-		            @Override
-		            public void run() {
-		            	  p.stylePane(x,y);
-		            }
-		        }, 
-		        2500 
-		);
+	}
+	
+	public void undoReasonHighlight(List<CustomPane> reasons) {
 		
+		for(CustomPane reason : reasons) {
+			reason.stylePane(reason.getPositionX(), reason.getPositionY());
+		}
 		
+		reasons.clear();
 	}
 
 }

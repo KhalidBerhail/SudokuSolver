@@ -73,4 +73,5 @@ public interface Grid  {
 
 
 	Set<String> getPossibleCandidat(int x, int y);
+	public Set<Cell> getAllCellsRelatedTo(Cell cell);
 }

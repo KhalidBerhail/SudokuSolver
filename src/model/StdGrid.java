@@ -3,6 +3,7 @@ package model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,11 +48,6 @@ public class StdGrid  implements Grid {
 		cells=grille;
 		
 	}
-	
-	
-	
-	
-	
 	
 	// REQUETES
 	
@@ -301,7 +297,6 @@ public class StdGrid  implements Grid {
 		// TODO Auto-generated method stub
 		for(int i=0;i<size;i++) {
             for(int j=0;j<size;j++) {
-            	
             	cells[i][j].setCandidates(this.getPossibleCandidat(i,j));
             }
         }
@@ -384,9 +379,16 @@ public class StdGrid  implements Grid {
 	 * 
 	 * ******/
 	
-	
+	public Set<Cell> getAllCellsRelatedTo(Cell cell) {
+        Set<Cell> cells = new HashSet<Cell>();
+        Coordinate coor = cell.getCoordinate();
+        cells.addAll(Arrays.asList(this.cells[coor.getX()]));
+        cells.addAll(this.getRegion(coor.getX(),coor.getY()));
+        cells.addAll(this.getColumn(coor.getY()));
+        return cells;
+    }
 		
-	}
+}
 
 
 	

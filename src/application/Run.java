@@ -3,7 +3,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class Run extends Application {
@@ -14,14 +16,20 @@ public class Run extends Application {
 
  @Override
  public void start(Stage primaryStage) throws Exception {
-    String fxmlResource = "/fxml/GamePage.fxml";
+    String fxmlResource = "/fxml/Home.fxml";
    
     Parent panel;
     panel = FXMLLoader.load(getClass().getResource(fxmlResource));
     Scene scene = new Scene(panel);
     Stage stage = new Stage();
-    stage.setResizable(true);
+    stage.setResizable(false);
     stage.setScene(scene);
+    stage.initStyle(StageStyle.UNDECORATED);
+    scene.setFill(Color.TRANSPARENT);
+    stage.initStyle(StageStyle.TRANSPARENT);
+    stage.setY(240);
+    stage.setX(530);
+    
     stage.show();
  }
  

@@ -11,6 +11,7 @@ public class PaneModel {
   
   public PaneModel() {
 	  selected = false;
+	  hovered = false;
 	  pcs = new PropertyChangeSupport(this);
   }
   
@@ -45,4 +46,5 @@ public class PaneModel {
 		  pcs.removePropertyChangeListener(propName, pcl);
 	  }
   }
+
 }

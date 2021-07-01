@@ -94,12 +94,14 @@ public class StdHistory<E> implements History<E> {
 		E e =this.tail.remove();
 		this.head.addFirst(e);
 		checkPCL();
+		
+		
 	}
 	
 	@Override
     public void goBackward() {
 		if (this.getCurrentPosition() <= 0) {
-			throw new AssertionError("goForward error position: StdHistory");
+			throw new AssertionError("goBackward error position: StdHistory");
 		}
 		this.tail.add(this.head.removeFirst());
 		checkPCL();

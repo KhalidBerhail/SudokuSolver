@@ -41,148 +41,8 @@ public class GridHelper {
 	 public static final String xmlFilePath = "solution.xml";
 	 private static  Grid grid;
 	 
-/*	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		StdGrid board;
-	    Set<String> CANDIDATES;
-		Cell[][] grille = new Cell[Grid.size][Grid.size];
-		  
-		CANDIDATES = new LinkedHashSet<String>();
-		for(int i=1;i<=Grid.size;i++) {
-			CANDIDATES.add(Integer.toString(i));
-		}
-
-		try {
-
-		    File fXmlFile = new File("grid.xml");
-		    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		    Document doc = dBuilder.parse(fXmlFile);
-		        
-		    
-		    doc.getDocumentElement().normalize();
-
-		    System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-		    NodeList nList = doc.getElementsByTagName("Row");
-            
-		    System.out.println("----------------------------");
-		    String[][] row= new String[Grid.size][Grid.size];
-		    for (int temp = 0; temp < nList.getLength(); temp++) {
-                 
-		        Node nNode = nList.item(temp);
-		        System.out.println("\n"+nNode.getTextContent());
-		        
-		        row[temp] = nNode.getTextContent().toString().split(",");
-		        
-                
-		        
-		    }
-		 
-		    for (int i = 0; i < Grid.size; i++) {
-		      for(int j=0;j<nList.getLength();j++) {
-	        	
-	        	  grille[i][j] = new StdCell(new StdCoordinate(i,j));
-	        	  if(!row[i][j].equals("-")) {
-	        		  grille[i][j].setValue(row[i][j]); 
-	        		  grille[i][j].lock();
-	        	  } 
-	        	  
-	          }
-		    }
-		    
-		    board = new StdGrid(CANDIDATES,grille);
-		    board.generateAllCandidat();
-		    for(int i=0;i<Grid.size;i++) {
-		    	for(int j=0;j<Grid.size;j++) {
-		    		board.getCellAt(i, j).setGrid(board);
-			    }
-		    }
-			
-		  
-		    Move solution = null;
-		    boolean stop=false;
-			while(!stop) {
-				
-				 solution=new OneCandidate(board).getSolution();
-				
-				 
-				 if(solution==null || solution.getActions().size() == 0) {
-					 
-					 solution=new UniqueCandidate(board).getSolution();
-					 
-				
-					
-					 
-				 }
-				 
-							
-				if(solution==null || solution.getActions().size() == 0) {
-					 solution=new IdenticalCandidates(board).getSolution();	 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution=new TwinsAndTriplet(board).getSolution();
-					 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution=new InteractionsBetweenRegion(board).getSolution();	 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution=new IsolatedGroups(board).getSolution();	 
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new MixedGroups(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Xwing(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new XyWing(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Coloring(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Burma(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Squirmbag(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Swordfish(board).getSolution();
-				 }
-				 if(solution==null || solution.getActions().size() == 0) {
-					 solution = new Jellyfish(board).getSolution();
-				 }
-				 if(solution!=null && solution.getActions().size() != 0) solution.act();
-				
-				 if(solution==null) {
-					 stop=true;
-				 }
-				 
-				 if(solution!=null) {
-					
-					 System.out.println(solution.getDetails());
-					    System.out.println("----------------------------");
-				 }
-				 
-				
-				 
-			}
-			 Save(board.getGrid());
-		
-		   
-		    
-		   
-		    
-		  
-		    
-		   
-		    } catch (Exception e) {
-		    e.printStackTrace();
-		    }
-
-	}
-	*/public static void Solve(Grid board) {
+public static void Solve(Grid board) {
+	
 	    Move solution = null;
 	    boolean stop=false;
 		while(!stop) {
@@ -242,11 +102,8 @@ public class GridHelper {
 			 
 			 if(solution!=null) {
 				
-				 //System.out.println(solution.getDetails());
-				   // System.out.println("----------------------------");
 			 }
 			 
-			  System.out.println("----------------------------");
 			 
 		}
 	}
@@ -277,15 +134,12 @@ public class GridHelper {
 		    
 		    doc.getDocumentElement().normalize();
 
-		    System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 		    NodeList nList = doc.getElementsByTagName("Row");
-            
-		    System.out.println("----------------------------");
+           
 		    String[][] row= new String[9][9];
 		    for (int temp = 0; temp < nList.getLength(); temp++) {
                  
 		        Node nNode = nList.item(temp);
-		        System.out.println("\n"+nNode.getTextContent());
 		        
 		        row[temp] = nNode.getTextContent().toString().split(",");
 		      
@@ -420,15 +274,13 @@ public class GridHelper {
 	    		    
 	    		    doc.getDocumentElement().normalize();
 
-	    		    System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+	    		   
 	    		    NodeList nList = doc.getElementsByTagName("Row");
 	                
-	    		    System.out.println("----------------------------");
 	    		    String[][] row= new String[9][9];
 	    		    for (int temp = 0; temp < nList.getLength(); temp++) {
 	                     
 	    		        Node nNode = nList.item(temp);
-	    		        System.out.println("\n"+nNode.getTextContent());
 	    		        
 	    		        row[temp] = nNode.getTextContent().toString().split(",");
 	    		      
@@ -462,6 +314,7 @@ public class GridHelper {
 	    		    } catch (Exception e) {
 	    		    e.printStackTrace();
 	    		    }
+	    		grid = board.deepCopy(board);
 	    		return board;
 	    	}
 	    	

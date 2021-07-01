@@ -157,12 +157,23 @@
 }
 
 .SettingsPane{
+	 
+	
 	-fx-background-image: url('../resources/red_panel.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-size: 400px;
 	-fx-background-position: center center;
-  
+	
     /*-fx-effect: dropshadow( gaussian , white, 127, 127, 0, 0); */
+}
+
+#homePane{
+	-fx-background-image: url('../resources/red_panel.png');
+	-fx-background-color: transparent;
+	-fx-background-repeat: no-repeat;
+	-fx-background-size: 300px;
+	-fx-background-position: center center;
+	
 }
 
 .closeButton{
@@ -194,7 +205,7 @@
 }
 
 .ProgressTitle{
-	-fx-text-fill: blue;
+	-fx-text-fill: #d06828;
 	-fx-font-family: "Anja Eliane accent";
 	-fx-font-size: 20px;
 }
@@ -323,6 +334,50 @@
 	-fx-background-image: url('../resources/returnClicked.png');
 	-fx-translate-y : +4;
 }
+
+#difficulty_button_home{
+	-fx-background-image: url('../resources/difficulty.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#difficulty_button_home:pressed{
+	-fx-background-image: url('../resources/difficultyClicked.png');
+	-fx-translate-y : +2;
+}
+
+#import_button_home{
+	-fx-background-image: url('../resources/import.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 40px;
+	-fx-background-repeat: no-repeat;
+}
+
+#import_button_home:pressed{
+	-fx-background-image: url('../resources/importClicked.png');
+	-fx-translate-y : +2;
+}
+
+#closeApp{
+	-fx-background-image: url('../resources/closeApp1.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
+#closeApp:pressed{
+	-fx-background-image: url('../resources/closeAppClicked.png');
+	-fx-translate-y : +2;
+}
+
+#returnHome{
+	-fx-background-image: url('../resources/return.png');
+	-fx-background-color: transparent;
+	-fx-background-size: 30px;
+	-fx-background-repeat: no-repeat;
+}
+
 /* 
 #puzzle_title1,#puzzle_title2,#error_msg{
 	-fx-font-family: "kenvector future";
